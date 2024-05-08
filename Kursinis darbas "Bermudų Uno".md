@@ -15,7 +15,7 @@ Tam jog įjungtumėte žaidimą **atsisiųskite** failus iš **GitHub** saugyklo
 
 ## Polymorphism
 **Polimorfizmas (Polymorphism)** nurodo, kad per tą pačią sąsają galite pasiekti skirtingų tipų objektus.
-```
+```py
 class Draw(ABC): # Line 113 Uno.py
     def __init__(self, x, y):
         self.x = x
@@ -32,10 +32,16 @@ class Text(Draw):
         text_rect = text_surface.get_rect(center=(self.x, self.y))
         screen.blit(text_surface, text_rect)
 ```
+- Draw yra abstrakti bazinė klasė, apibrėžianti objektų, kuriuos galima piešti ekrane, sąsają.
 
+- Text klasė yra konkretus Draw poklasis, kuriame pateikiamas konkretus draw_text įgyvendinimas.
+
+- Text klasė nepaiso abstraktaus metodo draw_text apibrėžtas Draw klasėje su savo įgyvendinimu, pritaikytu tekstui piešti naudojant Pygame biblioteką.
+
+- Nepaisant to, kad jie yra išreikšti kaip skirtingų klasių objektai (Draw ir Text), abu gali būti traktuojami vienodai, nes jie turi bendrą sąsają, kurią apibrėžia Draw klasė.
 ## Abstraction
 **Abstrakcija (Abstraction)** naudojama norint paslėpti nereikalingą informaciją ir rodyti tik reikalingą informaciją sąveikaujantiems vartotojams.
-```
+```py
 from abc import ABC, abstractmethod
 
 
@@ -49,10 +55,14 @@ class Draw(ABC): # Line 113 Uno.py
         pass
         
 ```
+- Draw yra abstrakti bazinė klasė, apibrėžianti metodą draw_text.
 
+- Text yra konkretus piešimo poklasis, įgyvendinantis draw_text metodą.
+
+- Laikantis Draw sąsajos, Text gali būti naudojamas polimorfiškai su kitomis klasėmis, kurios paveldi iš Draw.
 ## Inheritance
 **Paveldėjimas (Inheritance)** yra mechanizmas, leidžiantis klasei paveldėti savybes ir elgesį iš kitos klasės.
-```
+```py
 class Text(Draw): # Line 124 Uno.py
 	def draw_text(self, text, size, color): # <- 
 	    font = pygame.font.Font(None, size)  
@@ -61,9 +71,14 @@ class Text(Draw): # Line 124 Uno.py
 	    screen.blit(text_surface, text_rect)
         
 ```
+ - Text klasė paveldima iš Draw abstrakčios bazinės klasės.
+ 
+ - Dėl paveldėjimo Text klasė gauna prieigą prie Draw klasės atributų ir metodų, tokių kaip "x" ir "y".
+ 
+ - Text klasė pateikia savo abstrakčiojo metodo  draw_text, kuris yra apibrėžtas Draw abstrakčios bazės klasėje.
 ## Encapsulation
 **Enkapsuliacija (Encapsulation)** Duomenų susiejimas su tais duomenimis veikiančiais metodais.
-```
+```py
 class Button: #Line 78 Uno.py
 
 
@@ -87,9 +102,16 @@ class Button: #Line 78 Uno.py
         return self.rect.collidepoint(pos)
         
 ```
+- Button klasės atributai (rect, text, color, text_color, action, font, text_surface, text_rect) yra įtraukti į klasės apibrėžimą. Jie pasiekiami ir modifikuojami tik naudojant klasės metodus.
+
+- Metodas `__init__` inicijuoja Button objekto būseną nustatydamas jo atributus pagal pateiktus argumentus. Šie atributai saugo reikiamus duomenis mygtuko išvaizdai ir elgesiui.
+
+- Draw metodas apima mygtuko atvaizdavimo ant tam tikro paviršiaus logiką. Jis naudoja Pygame biblioteką, kad nubrėžtų stačiakampį, vaizduojantį mygtuką, ir užfiksuotų tekstą ant jo.
+
+- is_clicked metodas apima logiką, leidžiančią nustatyti, ar mygtukas spustelėtas, atsižvelgiant į pelės žymeklio padėtį. Jis patikrina, ar pateikta padėtis (pos) yra mygtuko stačiakampio (rect) ribose.
 ## Factory Method
 **Gamyklinis metodas(Factory Method)**: kūrybinio dizaino modelis, suteikiantis sąsają objektams kurti superklasėje, tačiau leidžiantis poklasiams pakeisti kuriamų objektų tipą
-```
+```py
 class Button: #Line 78 Uno.py
     def __init__(self, text, x, y, width, height, color, text_color, action=None):
         self.rect = pygame.Rect(x, y, width, height)
@@ -111,9 +133,15 @@ class Button: #Line 78 Uno.py
 
 ```
 
+ - Mygtukų klasė yra kaip produktas, vaizduojantis mygtukus, kuriuos galima sukurti.
+ 
+ - Mygtukų klasės konstruktorius yra kaip gamyklinis metodas. Jis sukuria mygtukų egzempliorius su nurodytomis savybėmis, tokiomis kaip tekstas, padėtis, dydis, spalva ir veiksmas.
+ 
+ - Kai reikia sukurti mygtuką, galima tiesiogiai sukurti mygtukų klasę su norimais parametrais.
+
 ## Template Method
 **Šablono metodas(Template Method)**: elgesio dizaino modelis, leidžiantis apibrėžti algoritmo skeletą bazinėje klasėje ir leisti poklasiams nepaisyti žingsnių nekeičiant bendros algoritmo struktūros
-```
+```py
 # Game loop 
 clock = pygame.time.Clock()  # Line 220 Uno.py
 running = True  
@@ -199,10 +227,15 @@ pygame.quit()
 sys.exit()
 
 ```
+- Įvykių tvarkymas: kilpa kartoja visus įvykius (pelės paspaudimus ir kt.) ir atitinkamai juos tvarko. Ši kilpos dalis yra atsakinga už vartotojo įvesties apdorojimą ir reagavimą į žaidimo įvykius.
+
+- Žaidimo būsenos atnaujinimas: po įvykių tvarkymo kodas patikrina, ar yra nugalėtojas, ar atėjo kompiuterio eilė žaisti. Jei reikia, jis atnaujina žaidimo būseną, pvz., pakeičia nugalėtoją arba atnaujina žaidimo statistiką.
+
+- Žaidimo piešimas: galiausiai kodas ekrane nubrėžia dabartinę žaidimo būseną. Tai apima kortelių, mygtukų ir teksto perteikimą, suteikiant vaizdinį grįžtamąjį ryšį.
 
 ## Observer pattern
 **Stebėtojo modelis (Observer pattern)** yra elgesio dizaino modelis, leidžiantis kai kuriems objektams pranešti kitiems objektams apie jų būsenos pokyčius
-```
+```py
 # Game loop
 clock = pygame.time.Clock() # Line 220 Uno.py
 running = True
@@ -246,7 +279,7 @@ while running:
 
 ```
 
-- Pygame.event.get() nuskaito įvykių, įvykusių nuo paskutinio kvietimio į šią funkciją, sąrašą.
+- pygame.event.get() nuskaito įvykių, įvykusių nuo paskutinio kvietimio į šią funkciją, sąrašą.
 
 - Ciklas kartojasi per kiekvieną sąrašo įvykį.
 
@@ -256,7 +289,7 @@ while running:
 
 ## Command Pattern
 **Komandų modelis(Command Pattern)** yra elgesio dizaino modelis, kuris užklausas ar paprastas operacijas paverčia objektais. Konversija leidžia atidėti arba nuotoliniu būdu vykdyti komandas.
-```
+```py
 def spawn_program_and_die(program, exit_code=0): # Line 73 Uno.py
     os.startfile(program)  <-
     # sys.exit(exit_code)
@@ -274,7 +307,7 @@ while running: # Line 243 Uno.py
             elif player_turn:
             #Rest of the code
 ```
-
+- "Minesweeper.exe" gali būti skaitomas kaip konkrečios komandos vykdymas, kai komanda (startfile Minesweeper.exe) yra įdėta į objektą.
 # Iššūkiai, su kuriais susidurta implementuojant OP
 - Python yra dinamiška kalba, o tai reiškia, kad kompiliavimo metu ji nevykdo griežto tipo tikrinimo. Nors ši funkcija suteikia lankstumo ir paprasto naudojimo, ji gali sukelti iššūkių dideliuose objektinio programavimo (OP) projektuose. Štai kodėl Python tam tikrais atvejais gali būti laikomas idealiu OP:
 -- **Dinaminis rašymas**: Python dinaminis rašymass leidžia kintamiesiems keisti tipus vykdymo metu, todėl gali būti sunkiau išlaikyti ir suprasti sudėtingas objektų hierarchijas. Dideliuose projektuose šis lankstumas gali sukelti painiavą ir klaidas, jei nebus tinkamai valdomas.
@@ -291,3 +324,4 @@ Python yra **nebloga** kalba žaidimų kūrimui atsižvelgiant į **bibliotekų 
  Įjungiant žaidimą iššoka **komandinė eilutė (Command prompt)**. Norėčiau, kad taip **nebūtų**, bet tam reikia programos **licencijos**. Šią problema planuojama išspręsti tolimesnėse Bermudų Uno iteracijose.
  
 Šis projektas mane išmokė daug apie **žaidimų kūrimą** python kalba. **Paskaitų medžiagos išmokė OP funkcijas**, kurias galėjau naudoti žaidime. **Trivialias** žaidimams OP funkcijas teko mokytis **pačiam** iš kitų resursų, kaip GitHub, Stack Overflow, Reddit ir W3Schools. Man **labai patiko** šis projektas ir aš, **be abejonės**, toliau dirbsiu prie šio projekto. 
+
